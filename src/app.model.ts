@@ -4,6 +4,11 @@ export interface Users {
     passowrd: string;
 }
 
+export interface Formator {
+    nume: string;
+    experienta: string[];
+}
+
 export interface Participant {
     type: "institutie_publica" | "agent_economic" | "persoana_fizica";
     curs: string;
@@ -19,7 +24,7 @@ export interface Participant {
         telefon_institutie: string;
         email_institutie: string;
         cui: string;
-        insotitor_extra: string; // intrebare #2
+        insotitor_extra: string;
     };
 
     // daca e agent economic
@@ -55,13 +60,19 @@ export interface Participant {
 
 
 export interface Curs {
-    type: "online" | "local";
     titlu: string;
-    curs_online?: CursOnline;
-    curs_local?: CursLocal;
+    descriere: string;
+    sesiuni: string[]; // id-uri de sesiune
 }
 
-export interface CursOnline {
+export interface Sesiune {
+    type: "online" | "local";
+    curs_online?: SesiuneOnline;
+    curs_local?: SesiuneLocal;
+    formatori: Formator[];
+}
+
+export interface SesiuneOnline {
     discount: DiscountCurs[];
     discounts: {
         procent: number;
@@ -75,18 +86,17 @@ export interface CursOnline {
         anc?: number;
         participare?: number;
     };
-    descriere_curs: string;
-    inscriere_curs: {
+    inscriere: {
         start: Date;
         end: Date;
     };
-    perioada_curs: {
+    perioada: {
         start: Date;
         end: Date;
-    }
+    };
 }
 
-export interface CursLocal {
+export interface SesiuneLocal {
     discount: DiscountCurs[];
     certificare: {
         anc: boolean;
@@ -97,14 +107,14 @@ export interface CursLocal {
         participare?: number;
     };
     locatie: string; // id Locatie
-    inscriere_curs: {
+    inscriere: {
         start: Date;
         end: Date;
     };
-    perioada_curs: {
+    perioada: {
         start: Date;
         end: Date;
-    }
+    };
 }
 
 export interface Locatie {
@@ -129,4 +139,3 @@ export interface DiscountCurs {
     fidelitate: { participare: number; consecutiva?: boolean; type: "fix" | "procent"; value: number; }
     descriere: string;
 }
-
