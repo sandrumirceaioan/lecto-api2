@@ -20,14 +20,14 @@ export class Discount {
     @Prop()
     descriere: string;
 
+    @Prop({ default: false })
+    activ: boolean;
+
     @Prop()
     createdBy?: string;
 
     @Prop({ default: new Date() })
     createdAt?: Date;
-
-    @Prop({ default: new Date() })
-    updatedAt?: Date;
 }
 
 export const DiscountSchema = SchemaFactory.createForClass(Discount);

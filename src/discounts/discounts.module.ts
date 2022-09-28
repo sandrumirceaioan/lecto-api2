@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UsersModule } from '../users/users.module';
 import { DiscountsController } from './discounts.controller';
 import { Discount, DiscountSchema } from './discounts.schema';
 import { DiscountsService } from './discounts.service';
@@ -9,6 +10,7 @@ import { DiscountsService } from './discounts.service';
     MongooseModule.forFeature([
       { name: Discount.name, schema: DiscountSchema }
     ]),
+    forwardRef(() => UsersModule),
   ],
   controllers: [DiscountsController],
   providers: [DiscountsService],

@@ -9,7 +9,6 @@ import { SharedModule } from './common/modules/shared/shared.module';
 import { UsersModule } from './users/users.module';
 import { AtGuard } from './common/guards/jwt-at.guard';
 import { RolesGuard } from './common/guards/role.guard';
-import { ArticlesModule } from './articles/articles.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { DiscountsModule } from './discounts/discounts.module';
@@ -35,7 +34,6 @@ import { DiscountsModule } from './discounts/discounts.module';
     AuthModule,
     UsersModule,
     DiscountsModule,
-    ArticlesModule,
   ],
   controllers: [AppController],
   providers: [

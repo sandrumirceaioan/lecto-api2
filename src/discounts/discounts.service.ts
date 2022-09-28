@@ -4,12 +4,15 @@ import { Model } from 'mongoose';
 import { SharedService } from '../common/modules/shared/shared.service';
 import { pick } from 'lodash';
 import { Discount, DiscountDocument } from './discounts.schema';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/users.schema';
 
 @Injectable()
 export class DiscountsService {
     constructor(
         @InjectModel(Discount.name) private discountModel: Model<DiscountDocument>,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private usersService: UsersService
     ) { }
 
     async save(user: Discount): Promise<Discount> {
@@ -52,5 +55,25 @@ export class DiscountsService {
 
     async remove(id) {
         return this.discountModel.findByIdAndRemove(id);
+    }
+
+    // HELPERS
+
+    public async populateDiscountFields(discounts: Discount[], ...methods: Array<string>) {
+        for await (const method of methods) {
+            if (method === 'users') {
+                discounts = await this.attachUsersToDiscounts(discounts);
+            }
+        }
+        return discounts;
+    }
+
+    public async attachUsersToDiscounts(discounts: Discount[]): Promise<Discount[]> {
+        const users: User[] = await this.usersService.find({}, { select: 'email' });
+
+        return discounts.map((discount) => {
+            discount.createdBy = users.find((user: User) => (<any>user)._id.toString() === discount.createdBy).email;
+            return discount;
+        });
     }
 }

@@ -1,5 +1,5 @@
 export interface Users {
-    role: "admin" | "user"; // intrebare #2 
+    role: "admin" | "user";
     email: string;
     passowrd: string;
 }
@@ -125,6 +125,7 @@ export interface Locatie {
     oras: string; // orasul in care este hotelul international
     judet: string; // judetul in care este hotelul international
     oferte: OfertaLocatie[];
+    active: boolean;
 }
 
 export interface OfertaLocatie {

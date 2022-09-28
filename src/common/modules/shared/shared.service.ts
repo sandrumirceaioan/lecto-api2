@@ -36,6 +36,7 @@ export class SharedService {
         };
 
         if (sort && direction) {
+            if (sort === 'name') sort = 'lastName';
             options = Object.assign(options, {
                 sort: {
                     [sort]: direction === 'asc' ? 1 : -1

@@ -19,7 +19,7 @@ export class AuthService {
     // register
     async localRegister(body: RegisterRequest): Promise<RegisterResponse> {
         const exist = await this.usersService.findOne({ email: body.email }, { select: 'email' });
-        if (exist && exist.email) throw new HttpException('Email already registered', HttpStatus.BAD_REQUEST);
+        if (exist && exist.email) throw new HttpException('Email-ul este deja inregistrat', HttpStatus.BAD_REQUEST);
 
         const newUser = await this.usersService.save({
             email: body.email,
@@ -27,7 +27,7 @@ export class AuthService {
             lastName: body.lastName,
             role: body.role ? body.role : 'user',
             atHash: await this.hashData(body.password),
-            status: true // TBD if we keep statuses
+            status: false // TBD if we keep statuses
         });
 
         // generate one set of tokens - hashed acces token needed for login password comparation
@@ -40,11 +40,14 @@ export class AuthService {
     async localLogin(body: LoginRequest): Promise<LoginResponse> {
         // check for user in database using email address provided
         const user = await this.usersService.findOne({ email: body.email });
-        if (!user) throw new UnauthorizedException('User not found');
+        if (!user) throw new UnauthorizedException('Utilizatorul nu a fost gasit');
+
+        // check if user status is active
+        if (!user.status) throw new UnauthorizedException('Utilizatorul nu este activ');
 
         // compare provided password with user hashed access token 
         const correctPassword = await compareSync(body.password, user.atHash);
-        if (!correctPassword) throw new UnauthorizedException('Access denied');
+        if (!correctPassword) throw new UnauthorizedException('Accesul interzis');
 
         // generate new set of tokens and update user rtHash for following comparations
         const tokens = await this.getTokens(user['_id'].toString(), user.role, user.email, body.remember);
@@ -67,7 +70,7 @@ export class AuthService {
     async refreshTokens(userId: string, rt: string): Promise<LoginResponse> {
         // check if user exists - we need refresh token from it for compatation
         const user = await this.usersService.findById(userId);
-        if (!user || !user.rtHash) throw new UnauthorizedException('User not found');
+        if (!user || !user.rtHash) throw new UnauthorizedException('Utilizatorul nu a fost gasit');
 
         // compare received refresh token with hasged refresh token from user
         const rtMatches = await compareSync(rt, user.rtHash);

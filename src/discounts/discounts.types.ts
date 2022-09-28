@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString } from "class-validator";
+import { Discount } from "./discounts.schema";
 
 export type CategorieDiscount = "volum" | "inscriere" | "fidelitate";
 
@@ -21,4 +22,9 @@ export interface DiscountFidelitate {
     consecutiva?: boolean;
     type: "fix" | "procent";
     value: number;
+}
+
+export interface DiscountsPaginated {
+    discounts: Discount[];
+    total: number;
 }
